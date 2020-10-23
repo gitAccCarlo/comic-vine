@@ -4,9 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -21,14 +28,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ListView listView;
     private ArrayList<String> moviesIdsList;
     private ArrayList<String> moviesNamesList;
+    private ArrayList<String> moviesPicsList;
+    private ArrayList<String> moviesDeckList;
+    private ArrayList<MovieDataModel> dataModels;
+    private static MovieAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +51,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         moviesIdsList = new ArrayList<>();
         moviesNamesList = new ArrayList<>();
+        moviesPicsList = new ArrayList<>();
+        moviesDeckList = new ArrayList<>();
+        dataModels = new ArrayList<>();
+        listView = findViewById(R.id.fullMoviesList);
+        final LoadingDialog loadingDialog = new LoadingDialog(MainActivity.this);
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        loadingDialog.startLoadingDialog();
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         String auxUrl = "https://comicvine.gamespot.com/api/movies/?api_key=abd2bd9158ea401d671579e918e7394cd55a1a87&format=json";
         final JsonObjectRequest moviesRequest = new JsonObjectRequest(Request.Method.GET,
@@ -46,42 +70,38 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         Log.i("moviesAPI", response.toString());
                         try {
-                            System.out.println(response.getString("results"));
-                            System.out.println("tamaño "+response.getJSONArray("results").length());
-
-                            System.out.println("La primera es "+response.getJSONArray("results").getJSONObject(0).get("name"));
-
                             for (int i = 0; i < response.getJSONArray("results").length(); i++) {
                                 String auxId=response.getJSONArray("results").getJSONObject(i).get("id").toString();
                                 String auxName=response.getJSONArray("results").getJSONObject(i).get("name").toString();
+                                String auxPic=response.getJSONArray("results").getJSONObject(i).getJSONObject("image").getString("small_url");
+                                String auxDeck=response.getJSONArray("results").getJSONObject(i).get("deck").toString();
                                 moviesIdsList.add(auxId);
                                 moviesNamesList.add(auxName);
-                                System.out.println("Movie "+moviesIdsList.get(moviesIdsList.size()-1)+" "+moviesNamesList.get(moviesNamesList.size()-1));
+                                moviesPicsList.add(auxPic);
+                                moviesDeckList.add(auxDeck);
+
+                                System.out.println("Movie"+ moviesIdsList.get(moviesIdsList.size()-1)+" "+moviesNamesList.get(moviesNamesList.size()-1)+" "+moviesDeckList.get(moviesDeckList.size()-1));
+                                System.out.println("Linkkkk"+ moviesPicsList.get(moviesPicsList.size()-1));
                             }
 
-                            /*
-                            if (!idsArboles.isEmpty()) {
-                                //SE LLENA LA LISTA
-                                for (int i = 0; i < idsArboles.size(); i++) {
-                                    dataModels.add(new ResumenArbolDataModel("Número de árbol: " + idsArboles.get(i), tiposArboles.get(i), etapasArboles.get(i)));
+                            if (!moviesIdsList.isEmpty()) {
+                                //LIST IS FILLED
+                                for (int i = 0; i < moviesIdsList.size(); i++) {
+                                    dataModels.add(new MovieDataModel(convertToImage(moviesPicsList.get(i)), moviesNamesList.get(i), moviesDeckList.get(i)));
                                 }
-                                adapter = new ResumenArbolesAdapter(dataModels, getApplicationContext());
+                                adapter = new MovieAdapter(dataModels, getApplicationContext());
                                 listView.setAdapter(adapter);
-                            }*/
-
-
-                        } catch (JSONException e) {
+                                loadingDialog.dismissDialog();
+                            }
+                        } catch (JSONException | IOException e) {
                             e.printStackTrace();
                         }
-
                         if (response.has("error")) {
                             try {
                                 Toast.makeText(MainActivity.this, response.getString("error"), Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                        } else {
-                            Toast.makeText(MainActivity.this, "Cambios guardados", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -90,23 +110,28 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("TreeAPI", "Error en la invocación a la API " + error.getCause());
                 Toast.makeText(MainActivity.this, "Se presentó un error, por favor intente más tarde", Toast.LENGTH_SHORT).show();
             }
-        }) {    //this is the part, that adds the header to the request
-
-        };
+        });
         queue.add(moviesRequest);
 
-        Intent intent=new Intent(MainActivity.this,MovieInfo.class);
-        startActivity(intent);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(view.getContext(), MovieInfo.class);
+                intent.putExtra("idMovie", moviesIdsList.get(i));
+                System.out.println("El id es "+moviesIdsList.get(i));
+                startActivity(intent);
+            }
+        });
+    }
 
 
-
-
-
-
-
-
-
-
+    private ImageView convertToImage(String urlIcon) throws IOException {
+        ImageView imView=new ImageView(getBaseContext());
+        URL url = new URL(urlIcon);
+        Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+        imView.setImageBitmap(bmp);
+        return imView;
     }
 
 

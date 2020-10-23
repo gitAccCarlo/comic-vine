@@ -1,6 +1,8 @@
 package com.example.comicvine;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,11 +57,15 @@ public class MovieAdapter extends ArrayAdapter<MovieDataModel> implements View.O
             viewHolder = (ViewHolder) convertView.getTag();
             result = convertView;
         }
-        ////////Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
-        ////////result.startAnimation(animation);
+        Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
+        result.startAnimation(animation);
         lastPosition = position;
         assert dataModel != null;
-        //////////////viewHolder.imMainPoster.setText(dataModel.getTiposActividad());
+
+        BitmapDrawable drawable = (BitmapDrawable) dataModel.getMainImagePoster().getDrawable();
+        Bitmap bitmap = drawable.getBitmap();
+
+        viewHolder.imMainPoster.setImageBitmap(bitmap);
         viewHolder.txtName.setText(dataModel.getMovieName());
         viewHolder.txtDeck.setText(dataModel.getMovieDeck());
         // Return the completed view to render on screen
