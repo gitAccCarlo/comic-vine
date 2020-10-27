@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/holo_green_dark"
+    android:background="#2fcb82"
     android:padding="50dp">
 
     <ProgressBar
@@ -23,7 +23,8 @@
         android:layout_marginTop="16dp"
         android:fontFamily="@font/roboto"
         android:text="@string/please_wait_it_may_take_a_while_we_re_looking_for_the_best"
-        android:textColor="@android:color/white"
+        android:textColor="#f9e04e"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressBar" />

@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,23 +19,20 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    private FloatingActionButton favMoviesFAButton;
     private ListView listView;
     private ArrayList<String> moviesIdsList;
     private ArrayList<String> moviesNamesList;
@@ -55,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         moviesDeckList = new ArrayList<>();
         dataModels = new ArrayList<>();
         listView = findViewById(R.id.fullMoviesList);
+        favMoviesFAButton = findViewById(R.id.floatingActionButton);
         final LoadingDialog loadingDialog = new LoadingDialog(MainActivity.this);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -120,6 +117,14 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(view.getContext(), MovieInfo.class);
                 intent.putExtra("idMovie", moviesIdsList.get(i));
                 System.out.println("El id es "+moviesIdsList.get(i));
+                startActivity(intent);
+            }
+        });
+
+        favMoviesFAButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), FavouriteMovies.class);
                 startActivity(intent);
             }
         });

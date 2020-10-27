@@ -8,6 +8,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +37,7 @@ public class MovieInfo extends AppCompatActivity {
     private TextView txMovieDescription;
     private TextView txMovieRating;
     private ImageView imPoster;
+    private Button btnFavMovie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,7 @@ public class MovieInfo extends AppCompatActivity {
         txMovieName = findViewById(R.id.textViewMovieName);
         txMovieDescription = findViewById(R.id.textViewMovieDescription);
         txMovieRating = findViewById(R.id.textViewMovieRating);
+        btnFavMovie = findViewById(R.id.buttonAddFavorite);
         movieId = Integer.parseInt(intent.getStringExtra("idMovie"));
 
         RequestQueue queue = Volley.newRequestQueue(MovieInfo.this);
@@ -95,6 +99,25 @@ public class MovieInfo extends AppCompatActivity {
 
         };
         queue.add(movieInfoRequest);
+
+
+
+        btnFavMovie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MovieModel movieModel;
+                try{
+                    movieModel = new MovieModel(movieId, String.valueOf(txMovieName.getText()), String.valueOf(txMovieDescription.getText()), String.valueOf(txMovieRating.getText()));
+                    Toast.makeText(MovieInfo.this, "Movie added to favourites",Toast.LENGTH_SHORT).show();
+                }catch (Exception e){
+                    Toast.makeText(MovieInfo.this, "Failed to add movie",Toast.LENGTH_SHORT).show();
+                    movieModel = new MovieModel(-1,"error","error","error");
+                }
+                DataBaseHelper dataBaseHelper = new DataBaseHelper(MovieInfo.this);
+                boolean success = dataBaseHelper.addOne(movieModel);
+                Toast.makeText(MovieInfo.this, "Successfully added to local DB",Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 

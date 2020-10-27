@@ -5,27 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
-    tools:context=".MainActivity">
+    tools:context=".FavouriteMovies">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        app:backgroundTint="#27cc81"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/roboto_black"
-        android:text="@string/our_movies"
+        android:text="@string/my_favourite_movies"
         android:textColor="#f9e04e"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView">
 
         <ListView
-            android:id="@+id/fullMoviesList"
+            android:id="@+id/favoriteMoviesList"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
