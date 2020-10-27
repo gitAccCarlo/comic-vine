@@ -14,4 +14,6 @@
     <string name="please_wait_it_may_take_a_while_we_re_looking_for_the_best">Please wait...It may take a while, we\'re looking for the best!</string>
     <string name="my_favourite_movies">My favourite movies</string>
     <string name="add_to_favourites">Add to favourites</string>
+    <string name="for_more_information">For more information</string>
+    <string name="click_here">click here</string>
 </resources>

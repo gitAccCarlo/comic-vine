@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(view.getContext(), MovieInfo.class);
                 intent.putExtra("idMovie", moviesIdsList.get(i));
+                intent.putExtra("behavior", 0);
                 System.out.println("El id es "+moviesIdsList.get(i));
                 startActivity(intent);
             }

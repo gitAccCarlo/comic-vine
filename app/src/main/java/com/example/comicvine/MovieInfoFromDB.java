@@ -9,7 +9,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,34 +27,36 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 
-public class MovieInfo extends AppCompatActivity {
+public class MovieInfoFromDB extends AppCompatActivity {
 
     private int movieId=1;
     private String name;
     private String description;
     private String rating;
-    private String detail;
     private TextView txMovieName;
     private TextView txMovieDescription;
     private TextView txMovieRating;
-    private TextView txDetail;
     private ImageView imPoster;
-    private Button btnFavMovie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_info);
+        setContentView(R.layout.activity_movie_info_from_d_b);
         Intent intent = getIntent();
-        imPoster = findViewById(R.id.imageViewMovieDetailPoster);
-        txMovieName = findViewById(R.id.textViewMovieName);
-        txMovieDescription = findViewById(R.id.textViewMovieDescription);
-        txMovieRating = findViewById(R.id.textViewMovieRating);
-        txDetail = findViewById(R.id.textViewClickHere);
-        btnFavMovie = findViewById(R.id.buttonAddFavorite);
+        imPoster = findViewById(R.id.imageViewMovieDetailPosterDBNOT);
+        txMovieName = findViewById(R.id.textViewMovieNameDB);
+        txMovieDescription = findViewById(R.id.textViewMovieDescriptionDB);
+        txMovieRating = findViewById(R.id.textViewMovieRatingDB);
         movieId = Integer.parseInt(intent.getStringExtra("idMovie"));
+        name = intent.getStringExtra("nameMovie");
+        description = intent.getStringExtra("descriptionMovie");
+        rating = intent.getStringExtra("ratingMovie");
 
-        RequestQueue queue = Volley.newRequestQueue(MovieInfo.this);
+        txMovieName.setText(name);
+        txMovieDescription.setText(description);
+        txMovieRating.setText(rating);
+
+        RequestQueue queue = Volley.newRequestQueue(MovieInfoFromDB.this);
         String auxUrl2 = "https://comicvine.gamespot.com/api/movies/?api_key=abd2bd9158ea401d671579e918e7394cd55a1a87&format=json&filter=id:"+ movieId;
         final JsonObjectRequest movieInfoRequest = new JsonObjectRequest(Request.Method.GET,
                 auxUrl2, null,
@@ -64,21 +65,9 @@ public class MovieInfo extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         Log.i("moviesAPI", response.toString());
                         try {
-                            System.out.println(response.getString("results"));
-
-                            name=response.getJSONArray("results").getJSONObject(0).get("name").toString();
-                            description=response.getJSONArray("results").getJSONObject(0).get("description").toString();
-                            rating=response.getJSONArray("results").getJSONObject(0).get("rating").toString();
-                            detail=response.getJSONArray("results").getJSONObject(0).get("site_detail_url").toString();
                             String auxPic=response.getJSONArray("results").getJSONObject(0).getJSONObject("image").getString("small_url");
-
-                            txMovieName.setText(name);
-                            txMovieDescription.setText(description);
-                            txMovieRating.setText(rating);
-
                             BitmapDrawable drawable = (BitmapDrawable) convertToImage(auxPic).getDrawable();
                             Bitmap bitmap = drawable.getBitmap();
-
                             imPoster.setImageBitmap(bitmap);
                         } catch (JSONException | IOException e) {
                             e.printStackTrace();
@@ -86,47 +75,22 @@ public class MovieInfo extends AppCompatActivity {
 
                         if (response.has("error")) {
                             try {
-                                Toast.makeText(MovieInfo.this, response.getString("error"), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MovieInfoFromDB.this, response.getString("error"), Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         } else {
-                            Toast.makeText(MovieInfo.this, "Cambios guardados", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MovieInfoFromDB.this, "Cambios guardados", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("TreeAPI", "Error en la invocación a la API " + error.getCause());
-                Toast.makeText(MovieInfo.this, "Se presentó un error, por favor intente más tarde", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MovieInfoFromDB.this, "Se presentó un error, por favor intente más tarde", Toast.LENGTH_SHORT).show();
             }
         });
         queue.add(movieInfoRequest);
-
-        txDetail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(detail));
-                startActivity(browserIntent);
-            }
-        });
-
-        btnFavMovie.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MovieDBModel movieDBModel;
-                try{
-                    movieDBModel = new MovieDBModel(movieId, String.valueOf(txMovieName.getText()), String.valueOf(txMovieDescription.getText()), String.valueOf(txMovieRating.getText()));
-                    Toast.makeText(MovieInfo.this, "Movie added to favourites",Toast.LENGTH_SHORT).show();
-                }catch (Exception e){
-                    Toast.makeText(MovieInfo.this, "Failed to add movie",Toast.LENGTH_SHORT).show();
-                    movieDBModel = new MovieDBModel(-1,"error","error","error");
-                }
-                DataBaseHelper dataBaseHelper = new DataBaseHelper(MovieInfo.this);
-                boolean success = dataBaseHelper.addOne(movieDBModel);
-                Toast.makeText(MovieInfo.this, "Successfully added to local DB",Toast.LENGTH_SHORT).show();
-            }
-        });
 
     }
 

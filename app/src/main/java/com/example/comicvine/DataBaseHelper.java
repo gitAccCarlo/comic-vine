@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -35,13 +34,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean addOne(MovieModel movieModel){
+    public boolean addOne(MovieDBModel movieDBModel){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(COLUMN_ID, movieModel.getId());
-        cv.put(COLUMN_MOVIE_NAME, movieModel.getMovieName());
-        cv.put(COLUMN_MOVIE_DESCRIPTION, movieModel.getMovieDescription());
-        cv.put(COLUMN_MOVIE_RATING, movieModel.getMovieRating());
+        cv.put(COLUMN_ID, movieDBModel.getId());
+        cv.put(COLUMN_MOVIE_NAME, movieDBModel.getMovieName());
+        cv.put(COLUMN_MOVIE_DESCRIPTION, movieDBModel.getMovieDescription());
+        cv.put(COLUMN_MOVIE_RATING, movieDBModel.getMovieRating());
         long insert = db.insert(MOVIE_TABLE,null,cv);
         if(insert == -1){
             return false;
@@ -50,8 +49,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public List<MovieModel> getAllFavourites(){
-        List<MovieModel> moviesDB = new ArrayList<>();
+    public List<MovieDBModel> getAllFavourites(){
+        List<MovieDBModel> moviesDB = new ArrayList<>();
         String queryAll="SELECT * FROM "+ MOVIE_TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(queryAll,null);
@@ -61,7 +60,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 String movieName = cursor.getString(1);
                 String movieDescription = cursor.getString(2);
                 String movieRating = cursor.getString(3);
-                MovieModel newMovie = new MovieModel(movieID,movieName,movieDescription,movieRating);
+                MovieDBModel newMovie = new MovieDBModel(movieID,movieName,movieDescription,movieRating);
                 moviesDB.add(newMovie);
             }while(cursor.moveToNext());
         }

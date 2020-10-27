@@ -1,16 +1,16 @@
 package com.example.comicvine;
 
-public class MovieModel {
+public class MovieDBModel {
 
     private int id;
     private String movieName;
     private String movieDescription;
     private String movieRating;
 
-    public MovieModel() {
+    public MovieDBModel() {
     }
 
-    public MovieModel(int id, String movieName, String movieDescription, String movieRating) {
+    public MovieDBModel(int id, String movieName, String movieDescription, String movieRating) {
         this.id = id;
         this.movieName = movieName;
         this.movieDescription = movieDescription;
@@ -19,7 +19,7 @@ public class MovieModel {
 
     @Override
     public String toString() {
-        return "MovieModel{" +
+        return "MovieDBModel{" +
                 "id=" + id +
                 ", movieName='" + movieName + '\'' +
                 ", movieDescription='" + movieDescription + '\'' +

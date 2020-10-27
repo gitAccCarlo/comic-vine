@@ -7,12 +7,6 @@ public class MovieDataModel {
     private String movieName;
     private String movieDeck;
 
-    public MovieDataModel( String movieName, String movieDeck) {
-        this.mainImagePoster = mainImagePoster;
-        this.movieName = movieName;
-        this.movieDeck = movieDeck;
-    }
-
     public MovieDataModel(ImageView mainImagePoster, String movieName, String movieDeck) {
         this.mainImagePoster = mainImagePoster;
         this.movieName = movieName;
