@@ -49,6 +49,18 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean deleteOne(String movieId){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + MOVIE_TABLE + " WHERE " + COLUMN_ID + " = " + movieId;
+        Cursor cursor = db.rawQuery(query,null);
+        if(cursor.moveToFirst()){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
     public List<MovieDBModel> getAllFavourites(){
         List<MovieDBModel> moviesDB = new ArrayList<>();
         String queryAll="SELECT * FROM "+ MOVIE_TABLE;

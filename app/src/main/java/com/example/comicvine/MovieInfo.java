@@ -124,7 +124,9 @@ public class MovieInfo extends AppCompatActivity {
                 }
                 DataBaseHelper dataBaseHelper = new DataBaseHelper(MovieInfo.this);
                 boolean success = dataBaseHelper.addOne(movieDBModel);
-                Toast.makeText(MovieInfo.this, "Successfully added to local DB",Toast.LENGTH_SHORT).show();
+                if(success){
+                    Toast.makeText(MovieInfo.this, "Successfully added to local DB",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

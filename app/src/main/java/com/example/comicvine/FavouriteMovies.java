@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -36,6 +37,31 @@ public class FavouriteMovies extends AppCompatActivity {
         movieRating = new ArrayList<>();
         favListView = findViewById(R.id.favoriteMoviesList);
 
+        updateFavouriteList();
+
+        favListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(FavouriteMovies.this,MovieInfoFromDB.class);
+                intent.putExtra("idMovie",String.valueOf(movieId.get(i)));
+                intent.putExtra("nameMovie",String.valueOf(movieName.get(i)));
+                intent.putExtra("descriptionMovie",String.valueOf(movieDescription.get(i)));
+                intent.putExtra("ratingMovie",String.valueOf(movieRating.get(i)));
+
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public void onRestart(){
+        super.onRestart();
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    }
+
+    private void updateFavouriteList(){
         DataBaseHelper dataBaseHelper = new DataBaseHelper(FavouriteMovies.this);
         List<MovieDBModel> favouriteMovies = dataBaseHelper.getAllFavourites();
         //Toast.makeText(FavouriteMovies.this,favouriteMovies.toString(),Toast.LENGTH_LONG).show();
@@ -52,18 +78,5 @@ public class FavouriteMovies extends AppCompatActivity {
         }else{
             Toast.makeText(FavouriteMovies.this,"Add a favourite movie first",Toast.LENGTH_LONG).show();
         }
-
-        favListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(FavouriteMovies.this,MovieInfoFromDB.class);
-                intent.putExtra("idMovie",String.valueOf(movieId.get(i)));
-                intent.putExtra("nameMovie",String.valueOf(movieName.get(i)));
-                intent.putExtra("descriptionMovie",String.valueOf(movieDescription.get(i)));
-                intent.putExtra("ratingMovie",String.valueOf(movieRating.get(i)));
-
-                startActivity(intent);
-            }
-        });
     }
 }

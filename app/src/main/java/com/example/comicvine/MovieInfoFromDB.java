@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ public class MovieInfoFromDB extends AppCompatActivity {
     private TextView txMovieName;
     private TextView txMovieDescription;
     private TextView txMovieRating;
+    private Button btRemove;
     private ImageView imPoster;
 
     @Override
@@ -47,6 +49,7 @@ public class MovieInfoFromDB extends AppCompatActivity {
         txMovieName = findViewById(R.id.textViewMovieNameDB);
         txMovieDescription = findViewById(R.id.textViewMovieDescriptionDB);
         txMovieRating = findViewById(R.id.textViewMovieRatingDB);
+        btRemove = findViewById(R.id.buttonRemoveMovie);
         movieId = Integer.parseInt(intent.getStringExtra("idMovie"));
         name = intent.getStringExtra("nameMovie");
         description = intent.getStringExtra("descriptionMovie");
@@ -92,7 +95,18 @@ public class MovieInfoFromDB extends AppCompatActivity {
         });
         queue.add(movieInfoRequest);
 
+
+        btRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DataBaseHelper dataBaseHelper = new DataBaseHelper(MovieInfoFromDB.this);
+                boolean success = dataBaseHelper.deleteOne(String.valueOf(movieId));
+                Toast.makeText(MovieInfoFromDB.this, "Successfully removed from local DB",Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
+
 
 
     private ImageView convertToImage(String urlIcon) throws IOException {

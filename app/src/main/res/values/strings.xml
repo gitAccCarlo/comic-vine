@@ -16,4 +16,5 @@
     <string name="add_to_favourites">Add to favourites</string>
     <string name="for_more_information">For more information</string>
     <string name="click_here">click here</string>
+    <string name="remove_from_favourite">Remove from favourite</string>
 </resources>
